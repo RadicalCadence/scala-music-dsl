@@ -1,0 +1,19 @@
+pcell ::= {expr "::"}+
+
+expr ::= term { { "+" | "-" } term }*
+
+term ::= factor { { "*" | "/" | "%" } factor }*
+
+factor ::= "(" exprs ")"
+   | "(" pcell ")"
+   | { "λ" | "lambda" } ident "." exprs
+   | "if" exprs "then" exprs "else" exprs
+   | "hd" pcell
+   | "tl" pcell
+   | "isCell" pcell
+   | "+" factor
+   | "-" factor
+   | numericLit
+   | ident
+
+exprs ::= expr+

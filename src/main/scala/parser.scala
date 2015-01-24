@@ -23,7 +23,6 @@ object parser extends StandardTokenParsers {
 
   // Parser Code Here
 
-  def parse(in: String): ParseResult[Expr] = parseAll(pcell,in) 
-  def parseAll[T](p: Parser[T], in: String): ParseResult[T] =
-      phrase(p)(new lexical.Scanner(in))
+  //def parse(in: String): ParseResult[Expr] = parseAll(pcell,in) 
+  //def parseAll[T](p: Parser[T], in: String): ParseResult[T] = phrase(p)(new lexical.Scanner(in))
 }
