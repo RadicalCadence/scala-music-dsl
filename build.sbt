@@ -3,7 +3,11 @@ name := "music-dsl"
 version := "1.0"
 
 scalaVersion := "2.11.4"
-    
-libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.1.0"
 
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+val scalazVersion = "7.1.0"
+    
+libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % scalazVersion,
+  "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
+)
+
+initialCommands in console := "import music_dsl.structures._"
