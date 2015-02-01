@@ -23,7 +23,7 @@ object structures {
     val pClass = Map("c" -> C, "d" -> D, "e" -> E, "f" -> F,
       "g" -> G, "a" -> A, "b" -> B)
     
-    def fromString(s: String):PitchClass = pClass.getOrElse(s.toLowerCase,C)
+    def apply(s: String):PitchClass = pClass.getOrElse(s.toLowerCase,C)
   }
 
   object PitchDecorator extends Enumeration {
@@ -33,19 +33,19 @@ object structures {
     val dec = Map("n" -> Natural, "#" -> Sharp, "-" -> Flat, "x" -> DoubleSharp, 
       "##" -> DoubleSharp, "_" -> DoubleFlat)
 
-    def fromString(s: String):PitchDecorator = dec.getOrElse(s.toLowerCase,Blank)
+    def apply(s: String):PitchDecorator = dec.getOrElse(s.toLowerCase,Blank)
   }
 
   object Pitch {
     import PitchClass._
     import PitchDecorator._
 
-    val r = """([a-g,A-G])([n|#|##|x|X|-|_]?)([,|']*)""".r
+    val r = """([a-g,A-G])([n|#|x|X|-|_]?)([,|']*)""".r
 
     def apply(s:String): Pitch = s match {
-      case r(p) =>     new Pitch(PitchClass.fromString(p),Blank,0)
-      case r(p,d) =>   new Pitch(PitchClass.fromString(p),PitchDecorator.fromString(d), 0)
-      case r(p,d,o) => new Pitch(PitchClass.fromString(p),PitchDecorator.fromString(d),o.size)
+      case r(p) =>     new Pitch(PitchClass(p),Blank,0)
+      case r(p,d) =>   new Pitch(PitchClass(p),PitchDecorator(d), 0)
+      case r(p,d,o) => new Pitch(PitchClass(p),PitchDecorator(d),o.size)
       case _ => new Pitch(C, Blank, 0)
     }
   }
