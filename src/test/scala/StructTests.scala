@@ -17,7 +17,11 @@ class StructTests extends FunSuite {
     assert(Pitch(PitchClass.D,PitchDecorator.Sharp,0) == Pitch("d#"))
   }
 
-  test("Pitch - String intepretation w/ decorator + octave") {
+  test("Pitch - String intepretation w/ # decorator + positive octave") {
     assert(Pitch(PitchClass.D,PitchDecorator.Sharp,2) == Pitch("d#''"))
+  }
+
+  test("Pitch - String intepretation w/ X decorator + negative octave") {
+    assert(Pitch(PitchClass.D,PitchDecorator.DoubleSharp,-2) == Pitch("dX,,"))
   }
 }

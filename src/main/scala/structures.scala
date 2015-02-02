@@ -1,7 +1,5 @@
 package music_dsl
 
-import scalaz._, Scalaz._
-
 //TODO: Implement tuplets, staves/voices, dynamics
 object structures {
 
@@ -9,29 +7,31 @@ object structures {
   case class Beat(value: (Int,Int) = (1,4)) extends Music {
     require((value._2 & (value._2 - 1)) == 0)
   }
-  case class Pitch(pitchClass: PitchClass.PitchClass, 
-    decorator: PitchDecorator.PitchDecorator, octave: Int) extends Music 
+  case class Pitch(pitchClass: PitchClass.Value, 
+    decorator: PitchDecorator.Value, octave: Int) extends Music {
+
+  }
   case class Note(pitch: Pitch, duration: Beat) extends Music
   case class PitchSet(pitches: Pitch*) extends Music 
   case class Chord(pitches: PitchSet, duration: Beat) extends Music
   case class Measure(timeSig: (Int,Int), music: Music*) extends Music 
 
-  object PitchClass extends Enumeration {
+  object PitchClass extends Enumeration with Music {
     type PitchClass = Value
     val C, D, E, F, G, A, B = Value
 
-    val pClass = Map("c" -> C, "d" -> D, "e" -> E, "f" -> F,
+    private val pClass = Map("c" -> C, "d" -> D, "e" -> E, "f" -> F,
       "g" -> G, "a" -> A, "b" -> B)
     
-    def apply(s: String):PitchClass = pClass.getOrElse(s.toLowerCase,C)
+    def apply(s: String):PitchClass = pClass.getOrElse(s.toLowerCase, C)
   }
 
-  object PitchDecorator extends Enumeration {
+  object PitchDecorator extends Enumeration with Music {
     type PitchDecorator = Value
     val Blank, Natural, Sharp, Flat, DoubleSharp, DoubleFlat = Value
 
-    val dec = Map("n" -> Natural, "#" -> Sharp, "-" -> Flat, "x" -> DoubleSharp, 
-      "##" -> DoubleSharp, "_" -> DoubleFlat)
+    private val dec = Map("n" -> Natural, "#" -> Sharp, "-" -> Flat, 
+      "x" -> DoubleSharp, "##" -> DoubleSharp, "_" -> DoubleFlat)
 
     def apply(s: String):PitchDecorator = dec.getOrElse(s.toLowerCase,Blank)
   }
@@ -45,9 +45,14 @@ object structures {
     def apply(s:String): Pitch = s match {
       case r(p) =>     new Pitch(PitchClass(p),Blank,0)
       case r(p,d) =>   new Pitch(PitchClass(p),PitchDecorator(d), 0)
-      case r(p,d,o) => new Pitch(PitchClass(p),PitchDecorator(d),o.size)
+      case r(p,d,o) => new Pitch(PitchClass(p),PitchDecorator(d),
+        o.count(c => (c == ''')) - o.count(c => (c == ',')))
       case _ => new Pitch(C, Blank, 0)
     }
+
   }
 
+  def transpose(m: Music, multiplier: Int): Music = m match {
+    case _ => m
+  }
 }
