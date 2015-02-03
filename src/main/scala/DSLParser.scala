@@ -8,28 +8,30 @@ import music_dsl.structures._
   */
 object DSLParser extends RegexParsers {
 
-  val r = """([a-g,A-G])([n|#|x|X|-|_]?)([,|']*)""".r
-
   def pitchClass: Parser[PitchClass.Value] = """([a-g,A-G])""".r ^^ { 
     PitchClass(_) 
   }
-  def pitchDecorator: Parser[PitchDecorator.Value] = """([n|#|x|X|-|_]?)""".r ^^ {
+  def pitchDecorator: Parser[PitchDecorator.Value] = """([n|#|x|X|\-|_]?)""".r ^^ {
     PitchDecorator(_) 
   }
   def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { case s =>
     s.count(c => (c == ''')) - s.count(c => (c == ','))
   }
 
-  def pitch: Parser[Music] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
+  def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
     case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
   }
 
-  def apply(input: String): Music = parseAll(pitch, input) match {
+  def measure: Parser[MusicContainer] = opt("|") ~> repsep(rep1(pitch), "|") ^^ {
+    case p => new Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
+  }
+
+  def apply(input: String): Music = parseAll(measure, input) match {
       case Success(result, _) => result
       case failure : NoSuccess => scala.sys.error(failure.msg)
   }
 
   def main(args: Array[String]): Unit = {
-    println(apply("C#,,"))
+    println(apply("| C# F G# C#' | C# G# F C# |"))
   }
 }

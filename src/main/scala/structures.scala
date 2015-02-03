@@ -4,55 +4,68 @@ package music_dsl
 object structures {
 
   sealed trait Music
-  case class Beat(value: (Int,Int) = (1,4)) extends Music {
+
+  sealed trait MusicLeaf extends Music
+  case class Beat(value: (Int,Int) = (1,4)) extends MusicLeaf {
     require((value._2 & (value._2 - 1)) == 0)
   }
   case class Pitch(pitchClass: PitchClass.Value, 
-    decorator: PitchDecorator.Value, octave: Int) extends Music {
-
+    decorator: PitchDecorator.Value, octave: Int) extends MusicLeaf {
+    def toPitchNumber: Int = PitchClass.toPitchNumber(pitchClass)+
+     PitchDecorator.toPitchNumber(decorator)+(octave*12) 
   }
-  case class Note(pitch: Pitch, duration: Beat) extends Music
-  case class PitchSet(pitches: Pitch*) extends Music 
-  case class Chord(pitches: PitchSet, duration: Beat) extends Music
-  case class Measure(timeSig: (Int,Int), music: Music*) extends Music 
+  case class Note(pitch: Pitch, duration: Beat) extends MusicLeaf
+  case class PitchSet(pitches: Pitch*) extends MusicLeaf 
+  case class Chord(pitches: PitchSet, duration: Beat) extends MusicLeaf
 
-  object PitchClass extends Enumeration with Music {
+  case class TimeSignature(num: Int = 4, denom: Int = 4) 
+
+  
+  //TODO: Add size limits based on time signature
+  sealed trait MusicContainer extends Music
+  case class Measure(timeSignature: TimeSignature, music: MusicLeaf*) extends MusicContainer
+  case class Staff(music: MusicContainer*) extends MusicContainer
+
+  object PitchClass extends Enumeration {
     type PitchClass = Value
     val C, D, E, F, G, A, B = Value
 
     private val pClass = Map("c" -> C, "d" -> D, "e" -> E, "f" -> F,
       "g" -> G, "a" -> A, "b" -> B)
+    private val midi = Map(C -> 0, D -> 2, E -> 4, F -> 5, G -> 7,
+      A -> 9, B -> 11)
     
     def apply(s: String):PitchClass = pClass.getOrElse(s.toLowerCase, C)
+    def toPitchNumber(p: PitchClass): Int = midi.getOrElse(p, 0)
   }
 
-  object PitchDecorator extends Enumeration with Music {
+  object PitchDecorator extends Enumeration {
     type PitchDecorator = Value
     val Blank, Natural, Sharp, Flat, DoubleSharp, DoubleFlat = Value
 
     private val dec = Map("n" -> Natural, "#" -> Sharp, "-" -> Flat, 
       "x" -> DoubleSharp, "##" -> DoubleSharp, "_" -> DoubleFlat)
+    private val midi = Map(Sharp -> 1, Flat -> -1, DoubleSharp -> 2, 
+      DoubleFlat -> -2)
 
     def apply(s: String):PitchDecorator = dec.getOrElse(s.toLowerCase,Blank)
+    def toPitchNumber(d: PitchDecorator): Int = midi.getOrElse(d, 0)
   }
 
   object Pitch {
     import PitchClass._
     import PitchDecorator._
 
-    val r = """([a-g,A-G])([n|#|x|X|-|_]?)([,|']*)""".r
+    val r = """([a-g,A-G])([n|#|x|X|\-|_]?)([,|']*)""".r
 
     def apply(s:String): Pitch = s match {
       case r(p) =>     new Pitch(PitchClass(p),Blank,0)
       case r(p,d) =>   new Pitch(PitchClass(p),PitchDecorator(d), 0)
       case r(p,d,o) => new Pitch(PitchClass(p),PitchDecorator(d),
         o.count(c => (c == ''')) - o.count(c => (c == ',')))
-      case _ => new Pitch(C, Blank, 0)
+      case _ => ???
     }
-
+    def apply(i: Int): Pitch = new Pitch(C,Blank,0)
   }
 
-  def transpose(m: Music, multiplier: Int): Music = m match {
-    case _ => m
-  }
 }
