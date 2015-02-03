@@ -3,11 +3,14 @@ package music_dsl
 //TODO: Implement tuplets, staves/voices, dynamics
 object structures {
 
-  sealed trait Music
+  trait Music
 
+  /** MusicLeaf is a leaf class in the Music tree, representing
+   *  pitches, rhythms, notes, and chords.
+   */
   sealed trait MusicLeaf extends Music
-  case class Beat(value: (Int,Int) = (1,4)) extends MusicLeaf {
-    require((value._2 & (value._2 - 1)) == 0)
+  case class Beat(num: Int = 1, denom: Int = 4) extends MusicLeaf {
+    require((denom & (denom - 1)) == 0, "Beat denominator must be a power of two.")
   }
   case class Pitch(pitchClass: PitchClass.Value, 
     decorator: PitchDecorator.Value, octave: Int) extends MusicLeaf {
@@ -18,10 +21,9 @@ object structures {
   case class PitchSet(pitches: Pitch*) extends MusicLeaf 
   case class Chord(pitches: PitchSet, duration: Beat) extends MusicLeaf
 
-  case class TimeSignature(num: Int = 4, denom: Int = 4) 
-
+  case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music
   
-  //TODO: Add size limits based on time signature
+  /** MusicContainers hold MusicLeave classes */
   sealed trait MusicContainer extends Music
   case class Measure(timeSignature: TimeSignature, music: MusicLeaf*) extends MusicContainer
   case class Staff(music: MusicContainer*) extends MusicContainer

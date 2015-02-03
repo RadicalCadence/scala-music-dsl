@@ -21,9 +21,16 @@ object DSLParser extends RegexParsers {
   def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
     case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
   }
+  
+  //TODO: Add math for dotted notes
+  def note: Parser[Note] = pitchClass ~ opt(pitchDecorator) ~ 
+  opt(pitchOctave) ~ """([\d])""".r ^^ {
+    case c ~ d ~ o ~ b => Note(Pitch(c, d.getOrElse(PitchDecorator.Blank), 
+      o.getOrElse(0)), Beat(1, b.toInt))
+  }
 
-  def measure: Parser[MusicContainer] = opt("|") ~> repsep(rep1(pitch), "|") ^^ {
-    case p => new Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
+  def measure: Parser[MusicContainer] = opt("|") ~> repsep(rep1(note | pitch), "|") ^^ {
+    case p => Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
   }
 
   def apply(input: String): Music = parseAll(measure, input) match {
@@ -32,6 +39,6 @@ object DSLParser extends RegexParsers {
   }
 
   def main(args: Array[String]): Unit = {
-    println(apply("| C# F G# C#' | C# G# F C# |"))
+    println(apply("| C#4 F4 G#8 C#'8 C#4 | G# F F# D# B"))
   }
 }
