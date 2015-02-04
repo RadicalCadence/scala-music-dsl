@@ -39,6 +39,11 @@ object DSLParser extends RegexParsers {
   }
 
   def main(args: Array[String]): Unit = {
-    println(apply("| C#4 F4 G#8 C#'8 C#4 | G# F F# D# B"))
+    //Isn't this SUPER COOL???
+    println(m"| C#4 F4 G#8 C#'8 C#4 | G# F F# D# B")
+  }
+
+  implicit class DSLHelper(val sc: StringContext) extends AnyVal {
+    def m(args: Any*): Any = { DSLParser(sc.parts(0)) }
   }
 }
