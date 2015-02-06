@@ -1,6 +1,7 @@
 package music_dsl
 
-//TODO: Implement tuplets, staves/voices, dynamics
+import scalaz._, Scalaz._
+
 object structures {
 
   trait Music
@@ -12,21 +13,19 @@ object structures {
   case class Beat(num: Int = 1, denom: Int = 4) extends MusicLeaf {
     require((denom & (denom - 1)) == 0, "Beat denominator must be a power of two.")
   }
-  case class Pitch(pitchClass: PitchClass.Value, 
+  case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music
+  case class NamedPitch(pitchClass: PitchClass.Value, 
     decorator: PitchDecorator.Value, octave: Int) extends MusicLeaf {
     def toPitchNumber: Int = PitchClass.toPitchNumber(pitchClass)+
-     PitchDecorator.toPitchNumber(decorator)+(octave*12) 
+     PitchDecorator.toPitchNumber(decorator) + (octave*12) 
   }
-  case class Note(pitch: Pitch, duration: Beat) extends MusicLeaf
-  case class PitchSet(pitches: Pitch*) extends MusicLeaf 
-  case class Chord(pitches: PitchSet, duration: Beat) extends MusicLeaf
-
-  case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music
+  case class Note(pitch: NamedPitch, duration: Beat) extends MusicLeaf
   
   /** MusicContainers hold MusicLeave classes */
+  //TODO: Implement dynamics
   sealed trait MusicContainer extends Music
   case class Measure(timeSignature: TimeSignature, music: MusicLeaf*) extends MusicContainer
-  case class Staff(music: MusicContainer*) extends MusicContainer
+  case class Staff(music: Music*) extends MusicContainer
 
   object PitchClass extends Enumeration {
     type PitchClass = Value
@@ -54,20 +53,33 @@ object structures {
     def toPitchNumber(d: PitchDecorator): Int = midi.getOrElse(d, 0)
   }
 
-  object Pitch {
+  object NamedPitch {
     import PitchClass._
     import PitchDecorator._
 
-    val r = """([a-g,A-G])([n|#|x|X|\-|_]?)([,|']*)""".r
+    private val r = """([a-g,A-G])([n|#|x|X|\-|_]?)([,|']*)""".r
 
-    def apply(s:String): Pitch = s match {
-      case r(p) =>     new Pitch(PitchClass(p),Blank,0)
-      case r(p,d) =>   new Pitch(PitchClass(p),PitchDecorator(d), 0)
-      case r(p,d,o) => new Pitch(PitchClass(p),PitchDecorator(d),
+    private val midi = Map(0 -> "C", 1 -> "C#", 2 -> "D", 3 -> "E-",
+      4 -> "E", 5 -> "F", 6 -> "F#", 7 -> "G", 8 -> "A-", 9 -> "A",
+      10 -> "B-", 11 -> "B")
+
+    def apply(s:String): NamedPitch = s match {
+      case r(p) =>     new NamedPitch(PitchClass(p),Blank,0)
+      case r(p,d) =>   new NamedPitch(PitchClass(p),PitchDecorator(d), 0)
+      case r(p,d,o) => new NamedPitch(PitchClass(p),PitchDecorator(d),
         o.count(c => (c == ''')) - o.count(c => (c == ',')))
       case _ => ???
     }
-    def apply(i: Int): Pitch = new Pitch(C,Blank,0)
-  }
+    def apply(i: Int): NamedPitch = { 
+      var octaves = "";
+      if(i > 0) {
+        octaves = "'" * (i / 12)
+      } else {
+        octaves = "," * (Math.abs(i-12) / 12)
+      }
 
+      NamedPitch((midi.getOrElse(Math.abs((i+48)%12),"C")+octaves))
+    }
+  }
+  
 }

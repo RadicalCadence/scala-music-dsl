@@ -18,14 +18,14 @@ object DSLParser extends RegexParsers {
     s.count(c => (c == ''')) - s.count(c => (c == ','))
   }
 
-  def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
-    case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
+  def pitch: Parser[NamedPitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
+    case c ~ d ~ o => NamedPitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
   }
   
   //TODO: Add math for dotted notes
   def note: Parser[Note] = pitchClass ~ opt(pitchDecorator) ~ 
   opt(pitchOctave) ~ """([\d])""".r ^^ {
-    case c ~ d ~ o ~ b => Note(Pitch(c, d.getOrElse(PitchDecorator.Blank), 
+    case c ~ d ~ o ~ b => Note(NamedPitch(c, d.getOrElse(PitchDecorator.Blank), 
       o.getOrElse(0)), Beat(1, b.toInt))
   }
 
@@ -44,6 +44,6 @@ object DSLParser extends RegexParsers {
   }
 
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
-    def m(args: Any*): Any = { DSLParser(sc.parts(0)) }
+    def m(args: Any*): Music = { DSLParser(sc.parts(0)) }
   }
 }
