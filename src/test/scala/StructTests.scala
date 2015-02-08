@@ -6,30 +6,30 @@ class StructTests extends FunSuite {
 
   import structures._
 
-  test("NamedPitch - String interpetation") {
-    assert(NamedPitch(PitchClass.D,PitchDecorator.Blank,0)== NamedPitch("d"))
+  test("Pitch - String interpetation") {
+    assert(Pitch(PitchClass.D,PitchDecorator.Blank,0)== Pitch("d"))
   }
   
-  test("NamedPitch - String intepretation w/ flat decorator") {
-    assert(NamedPitch(PitchClass.E,PitchDecorator.Flat,0) == NamedPitch("e-"))
+  test("Pitch - String intepretation w/ flat decorator") {
+    assert(Pitch(PitchClass.E,PitchDecorator.Flat,0) == Pitch("e-"))
   }
 
-  test("NamedPitch - String intepretation w/ # decorator + positive octave") {
-    assert(NamedPitch(PitchClass.D,PitchDecorator.Sharp,2) == NamedPitch("d#''"))
+  test("Pitch - String intepretation w/ # decorator + positive octave") {
+    assert(Pitch(PitchClass.D,PitchDecorator.Sharp,2) == Pitch("d#''"))
   }
 
-  test("NamedPitch - String intepretation w/ X decorator + negative octave") {
-    assert(NamedPitch(PitchClass.D,PitchDecorator.DoubleSharp,-2) == NamedPitch("dX,,"))
+  test("Pitch - String intepretation w/ X decorator + negative octave") {
+    assert(Pitch(PitchClass.D,PitchDecorator.DoubleSharp,-2) == Pitch("dX,,"))
   }
 
-  test("NamedPitch - toPitchNumber") {
-    assert(NamedPitch(PitchClass.D,PitchDecorator.DoubleSharp,-2).toPitchNumber == -20)
+  test("Pitch - toPitchNumber") {
+    assert(Pitch(PitchClass.D,PitchDecorator.DoubleSharp,-2).toPitchNumber == -20)
   }
   
-  test("NamedPitch - fromPitchNumber") {
-    assert(NamedPitch(9) == NamedPitch("A"))
-    assert(NamedPitch(15) == NamedPitch("E-'"))
-    assert(NamedPitch(-3) == NamedPitch("A,"))
-    assert(NamedPitch(-14) == NamedPitch("B-,,"))
+  test("Pitch - fromPitchNumber") {
+    assert(Pitch(9) == Pitch("A"))
+    assert(Pitch(15) == Pitch("E-'"))
+    assert(Pitch(-3) == Pitch("A,"))
+    assert(Pitch(-14) == Pitch("B-,,"))
   }
 }
