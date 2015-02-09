@@ -12,10 +12,11 @@ to create a Scala library that offers a simple yet powerful DSL to succinctly an
 easily write music, which can be parsed by Scala to be manipulated, typeset, and
 performed live. 
 
-*See the Wiki for more information!*
+Potential users should be highly wary of using this library until the syntax
+is completely nailed down. 
 
 Authors
 -------
 
-Griffin Moe (gmoe@luc.edu)
-George K. Thiruvathukal (gkt@cs.luc.edu)
+* Griffin Moe (gmoe@luc.edu)
+* George K. Thiruvathukal (gkt@cs.luc.edu)
