@@ -1,8 +1,8 @@
-name := "music-dsl"
+name := "radical-cadence"
 
 version := "1.0"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.5"
 
 val scalazVersion = "7.1.1"
     
@@ -12,4 +12,7 @@ libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalatest" % "scalatest_2.11" % "2.2.1" % "test"
 )
 
-initialCommands in console := "import music_dsl.structures._"
+initialCommands in console := """
+import radical_cadence.dsl.structures._
+import radical_cadence.dsl.parser._
+"""

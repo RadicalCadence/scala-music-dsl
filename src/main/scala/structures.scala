@@ -1,4 +1,4 @@
-package music_dsl
+package radical_cadence.dsl
 
 import scalaz._, Scalaz._
 
@@ -7,8 +7,7 @@ object structures {
   trait Music 
 
   /** MusicLeaf is a leaf class in the Music tree, representing
-   *  pitches, rhythms, notes, and chords.
-   */
+   *  pitches, rhythms, notes, and chords.  */
   sealed trait MusicLeaf extends Music
   case class Beat(num: Int = 1, denom: Int = 4) extends MusicLeaf {
     require((denom & (denom - 1)) == 0, "Beat denominator must be a power of two.")
@@ -21,11 +20,18 @@ object structures {
   }
   case class Note(pitch: Pitch, duration: Beat) extends MusicLeaf
   
-  /** MusicContainers hold MusicLeave classes */
-  //TODO: Implement dynamics
-  sealed trait MusicContainer extends Music
-  case class Measure(timeSignature: TimeSignature, music: Music*) extends MusicContainer
-  case class Staff(music: Music*) extends MusicContainer
+  /** MusicContainers hold MusicLeaf classes */
+  sealed trait MusicContainer extends Music with Seq[Music]
+  case class Measure(timeSignature: TimeSignature, music: Music*) extends MusicContainer {
+    def iterator: Iterator[Music] = music.iterator
+    def length: Int = music.length
+    def apply(idx: Int): Music = music(idx)
+  }
+  case class Staff(music: Music*) extends MusicContainer {
+    def iterator: Iterator[Music] = music.iterator
+    def length: Int = music.length
+    def apply(idx: Int): Music = music(idx)
+  }
 
   object PitchClass extends Enumeration {
     type PitchClass = Value
@@ -58,7 +64,7 @@ object structures {
   object RomanNum extends Enumeration {
     type RomanNum = Value
     val I, II, III, IV, V, VI, VII = Value
-  }
+  } 
 
   object Pitch {
     import PitchClass._
@@ -88,5 +94,5 @@ object structures {
       Pitch((midi.getOrElse(Math.abs((i+48)%12),"C")+octaves))
     }
   }
-  
+
 }

@@ -1,46 +1,45 @@
-package music_dsl
+package radical_cadence.dsl
 
 import scala.util.parsing.combinator.RegexParsers
-import music_dsl.structures._
+import radical_cadence.dsl.structures._
 
 /**
   * Parser combinator for the music notation DSL.
   */
-object DSLParser extends RegexParsers {
+package object parser {
 
-  def pitchClass: Parser[PitchClass.Value] = """([a-g,A-G])""".r ^^ { 
-    PitchClass(_) 
-  }
-  def pitchDecorator: Parser[PitchDecorator.Value] = """([n|#|x|X|\-|_]?)""".r ^^ {
-    PitchDecorator(_) 
-  }
-  def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { case s =>
-    s.count(c => (c == ''')) - s.count(c => (c == ','))
-  }
+  object DSLParser extends RegexParsers {
 
-  def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
-    case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
-  }
-  
-  //TODO: Add math for dotted notes
-  def note: Parser[Note] = pitchClass ~ opt(pitchDecorator) ~ 
-  opt(pitchOctave) ~ """([\d])""".r ^^ {
-    case c ~ d ~ o ~ b => Note(Pitch(c, d.getOrElse(PitchDecorator.Blank), 
-      o.getOrElse(0)), Beat(1, b.toInt))
-  }
+    def pitchClass: Parser[PitchClass.Value] = """([a-g,A-G])""".r ^^ { 
+      PitchClass(_) 
+    }
+    def pitchDecorator: Parser[PitchDecorator.Value] = """([n|#|x|X|\-|_]?)""".r ^^ {
+      PitchDecorator(_) 
+    }
+    def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { case s =>
+      s.count(c => (c == ''')) - s.count(c => (c == ','))
+    }
 
-  def measure: Parser[MusicContainer] = opt("|") ~> repsep(rep1(note | pitch), "|") ^^ {
-    case p => Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
-  }
+    def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
+      case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
+    }
+    
+    //TODO: Add math for dotted notes
+    def note: Parser[Note] = pitchClass ~ opt(pitchDecorator) ~ 
+    opt(pitchOctave) ~ """([\d])""".r ^^ {
+      case c ~ d ~ o ~ b => Note(Pitch(c, d.getOrElse(PitchDecorator.Blank), 
+        o.getOrElse(0)), Beat(1, b.toInt))
+    }
 
-  def apply(input: String): Music = parseAll(measure, input) match {
-      case Success(result, _) => result
-      case failure : NoSuccess => scala.sys.error(failure.msg)
-  }
+    def measure:Parser[MusicContainer]= opt("|") ~> repsep(rep1(note|pitch),"|") <~ opt("|") ^^ {
+      case p => Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
+    }
 
-  def main(args: Array[String]): Unit = {
-    //Isn't this SUPER COOL???
-    println(m"| C#4 F4 G#8 C#'8 C#4 | G# F F# D# B")
+    def apply(input: String): Music = parseAll(measure, input) match {
+        case Success(result, _) => result
+        case failure : NoSuccess => scala.sys.error(failure.msg)
+    }
+
   }
 
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
