@@ -4,33 +4,48 @@ import scalaz._, Scalaz._
 
 object structures {
 
-  trait Music 
+  trait Music extends Traversable[Music]
 
-  /** MusicLeaf is a leaf class in the Music tree, representing
-   *  pitches, rhythms, notes, and chords.  */
-  sealed trait MusicLeaf extends Music
-  case class Beat(num: Int = 1, denom: Int = 4) extends MusicLeaf {
+  case class Beat(num: Int = 1, denom: Int = 4) extends Music {
     require((denom & (denom - 1)) == 0, "Beat denominator must be a power of two.")
+
+    def foreach[U](f: Music => U) = f(this)
+    override def toString: String = s"Beat[$num,$denom]"
   }
-  case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music
+
+  case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music {
+    def foreach[U](f: Music => U) = f(this)
+    override def toString: String = s"TimeSig[$num,$denom]"
+  }
+
   case class Pitch(pitchClass: PitchClass.Value, 
-    decorator: PitchDecorator.Value, octave: Int) extends MusicLeaf {
-    def toPitchNumber: Int = PitchClass.toPitchNumber(pitchClass)+
-     PitchDecorator.toPitchNumber(decorator) + (octave*12) 
+    decorator: PitchDecorator.Value, octave: Int) extends Music {
+    def foreach[U](f: Music => U) = f(this)
+    def toPitchNumber: Int = { PitchClass.toPitchNumber(pitchClass)+
+     PitchDecorator.toPitchNumber(decorator) + (octave*12) }
+
+    override def toString: String = { 
+      var octaves = "";
+      if (octave > 0) { octaves = "'" * (octave / 12) } 
+      else { octaves = "," * (Math.abs(octave-12) / 12) }
+
+      pitchClass.toString + decorator.toString + octaves
+    }
   }
-  case class Note(pitch: Pitch, duration: Beat) extends MusicLeaf
-  
-  /** MusicContainers hold MusicLeaf classes */
-  sealed trait MusicContainer extends Music with Seq[Music]
-  case class Measure(timeSignature: TimeSignature, music: Music*) extends MusicContainer {
-    def iterator: Iterator[Music] = music.iterator
-    def length: Int = music.length
-    def apply(idx: Int): Music = music(idx)
+
+  case class Note(pitch: Pitch, duration: Beat) extends Music {
+    def foreach[U](f: Music => U) = f(this)
+    override def toString: String = pitch.toString + duration
   }
-  case class Staff(music: Music*) extends MusicContainer {
-    def iterator: Iterator[Music] = music.iterator
-    def length: Int = music.length
-    def apply(idx: Int): Music = music(idx)
+
+  case class Measure(timeSignature: TimeSignature, music: Music*) extends Music {
+    def foreach[U](f: Music => U) = music foreach f
+    override def toString: String = s"Measure($timeSignature, $music)"
+  }
+
+  case class Staff(music: Music*) extends Music {
+    def foreach[U](f: Music => U) = music foreach f
+    override def toString: String = s"Staff($music)"
   }
 
   object PitchClass extends Enumeration {
@@ -44,7 +59,7 @@ object structures {
     
     def apply(s: String):PitchClass = pClass.getOrElse(s.toLowerCase, C)
     def toPitchNumber(p: PitchClass): Int = midi.getOrElse(p, 0)
-    def toString(p: PitchClass): String = pClass.map(_.swap).getOrElse(p, "C")
+    override def toString: String = pClass.map(_.swap).getOrElse(this.Value, "C")
   }
 
   object PitchDecorator extends Enumeration {
@@ -58,7 +73,7 @@ object structures {
 
     def apply(s: String):PitchDecorator = dec.getOrElse(s.toLowerCase,Blank)
     def toPitchNumber(d: PitchDecorator): Int = midi.getOrElse(d, 0)
-    def toString(p: PitchDecorator): String = dec.map(_.swap).getOrElse(p, "")
+    override def toString: String = dec.map(_.swap).getOrElse(this.Value, "")
   }
 
   object RomanNum extends Enumeration {

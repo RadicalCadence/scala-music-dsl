@@ -31,7 +31,7 @@ package object parser {
         o.getOrElse(0)), Beat(1, b.toInt))
     }
 
-    def measure:Parser[MusicContainer]= opt("|") ~> repsep(rep1(note|pitch),"|") <~ opt("|") ^^ {
+    def measure:Parser[Staff]= opt("|") ~> repsep(rep1(note|pitch),"|") <~ opt("|") ^^ {
       case p => Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
     }
 
