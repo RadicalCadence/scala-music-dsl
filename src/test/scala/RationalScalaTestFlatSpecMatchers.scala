@@ -1,4 +1,4 @@
-package scalatddpackt
+package radical_cadence.util
 
 import org.scalatest._
 

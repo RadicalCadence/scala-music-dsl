@@ -45,4 +45,16 @@ package object parser {
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
     def m(args: Any*): Music = { DSLParser(sc.parts(0)) }
   }
+
+  object DSLGenerator {
+    
+    def apply(m: Music): String = codify(m)
+
+    def codify(m: Music): String = m match {
+      case Note(p,d) => p.toString+d.denom
+      case Measure(ts,ms) => s"""| ${codify(ms)} |"""
+      case Staff(ms) => s"""${codify(ms)}"""
+      case _ => ""
+    }
+  }
 }
