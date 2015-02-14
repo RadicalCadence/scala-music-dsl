@@ -42,4 +42,20 @@ class StructTests extends FunSuite {
       Note(Pitch(C,Blank,0),Beat(1,4)), Note(Pitch(E,Blank,0),Beat(1,4)),
       Note(Pitch(G,Blank,0),Beat(1,4)), Note(Pitch(C,Blank,1),Beat(1,4)))))
   }
+
+  test("Measure - Parsed simple measure + decorators") {
+    import structures.PitchDecorator._
+    import structures.PitchClass._
+
+    assert(m"| C#4 F4 G#4 C#'4 |" == Staff(Measure(TimeSignature(4,4),
+      Note(Pitch(C,Sharp,0),Beat(1,4)), Note(Pitch(F,Blank,0),Beat(1,4)),
+      Note(Pitch(G,Sharp,0),Beat(1,4)), Note(Pitch(C,Sharp,1),Beat(1,4)))))
+  }
+
+  test("Interval - Parsed intervals") {
+    assert(Interval("M2") == Interval(IntervalQuality.Major, 2))
+    assert(Interval("-aug4") == Interval(IntervalQuality.Augmented, -4))
+    assert(Interval("+m6") == Interval(IntervalQuality.Minor, 6))
+  }
+
 }

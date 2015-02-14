@@ -65,7 +65,6 @@ package object structures {
    override def toString: String = s"<${pitch.toString} $duration>"
   }
 
-
   case class Measure(timeSignature: TimeSignature, music: Music*) extends Music {
     override def foreach[U](f: Music => U) = music foreach f
     override def toString: String = s"Measure($timeSignature, $music)"
@@ -101,9 +100,46 @@ package object structures {
     def toString(d:PitchDecorator.Value): String = dec.map(_.swap).getOrElse(d, "")
   }
 
-  object RomanNum extends Enumeration {
-    type RomanNum = Value
+  object ScaleDegree extends Enumeration {
+    type ScaleDegree = Value
     val I, II, III, IV, V, VI, VII = Value
   } 
 
+  trait Mode extends Music {
+    def getDegreePitch(d: ScaleDegree.Value): Pitch
+  }
+
+  object IntervalQuality extends Enumeration {
+    type IntervalQuality = Value
+    val Major, Minor, Perfect, Augmented, Diminished = Value
+
+    val qual = Map("M" -> Major, "maj" -> Major, "m" -> Minor, "min" -> Minor,
+      "P" -> Perfect, "aug" -> Augmented, "dim" -> Diminished)
+
+    def apply(s: String): IntervalQuality = qual.getOrElse(s, Major)
+    def toString(q: IntervalQuality.Value):String = q match {
+      case Major => "M"
+      case Minor => "m"
+      case Perfect => "P"
+      case Augmented => "aug"
+      case Diminished => "dim"
+    }
+  }
+
+  case class Interval(quality: IntervalQuality.Value, number: Int) extends Music {
+    //TODO: We also need to test for valid quality+number combos
+    require(number != 0)
+    override def toString:String = {
+      (if(number>0) "+" else "-")+IntervalQuality.toString(quality)+Math.abs(number).toString
+    }
+  }
+
+  object Interval {
+    val r = """^([+,-]?)(M|m|P|aug|dim)(\d+)""".r
+
+    def apply(s: String): Interval = s match {
+      case r(q,d) => new Interval(IntervalQuality(q), d.toInt)
+      case r(p,q,d) => new Interval(IntervalQuality(q), (p+d).toInt)
+    }
+  }
 }
