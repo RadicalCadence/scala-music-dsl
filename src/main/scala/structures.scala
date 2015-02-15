@@ -18,7 +18,7 @@ package object structures {
   }
 
   case class Pitch(pitchClass: PitchClass.Value, 
-    decorator: PitchDecorator.Value, octave: Int) extends Music {
+    decorator: PitchDecorator.Value, octave: Int) extends Music with Ordered[Pitch] {
     def toPitchNumber: Int = { PitchClass.toPitchNumber(pitchClass)+
      PitchDecorator.toPitchNumber(decorator) + (octave*12) }
 
@@ -29,6 +29,8 @@ package object structures {
 
       pitchClass.toString + PitchDecorator.toString(decorator) + octaves
     }
+
+    def compare(that: Pitch): Int = this.toPitchNumber.compare(that.toPitchNumber)
   }
 
   //TODO: Put all parsing into the DSLParser...
@@ -105,25 +107,15 @@ package object structures {
     val I, II, III, IV, V, VI, VII = Value
   } 
 
-  trait Mode extends Music {
-    def getDegreePitch(d: ScaleDegree.Value): Pitch
-  }
-
   object IntervalQuality extends Enumeration {
     type IntervalQuality = Value
-    val Major, Minor, Perfect, Augmented, Diminished = Value
+    val Unison, Major, Minor, Perfect, Augmented, Diminished, Octave = Value
 
     val qual = Map("M" -> Major, "maj" -> Major, "m" -> Minor, "min" -> Minor,
       "P" -> Perfect, "aug" -> Augmented, "dim" -> Diminished)
 
-    def apply(s: String): IntervalQuality = qual.getOrElse(s, Major)
-    def toString(q: IntervalQuality.Value):String = q match {
-      case Major => "M"
-      case Minor => "m"
-      case Perfect => "P"
-      case Augmented => "aug"
-      case Diminished => "dim"
-    }
+    def apply(s: String): IntervalQuality = qual.getOrElse(s, Unison)
+    def toString(q: IntervalQuality.Value):String = qual.map(_.swap).getOrElse(q,"")
   }
 
   case class Interval(quality: IntervalQuality.Value, number: Int) extends Music {
@@ -135,11 +127,46 @@ package object structures {
   }
 
   object Interval {
+    import KeySignatureSpelling._
+    import IntervalQuality._
+
     val r = """^([+,-]?)(M|m|P|aug|dim)(\d+)""".r
 
     def apply(s: String): Interval = s match {
       case r(q,d) => new Interval(IntervalQuality(q), d.toInt)
       case r(p,q,d) => new Interval(IntervalQuality(q), (p+d).toInt)
     }
+
+    def apply(i: Int): Interval = i match {
+      case 0 => new Interval(Unison, 1) 
+      case 1 => new Interval(Minor, 2)
+      case 2 => new Interval(Major, 2)
+      case 3 => new Interval(Minor, 3)
+      case 4 => new Interval(Major, 3)
+      case 5 => new Interval(Perfect, 4)
+      case 6 => new Interval(Diminished, 5)
+      case 7 => new Interval(Perfect, 5)
+      case 8 => new Interval(Minor, 6)
+      case 9 => new Interval(Major, 6)
+      case 10 => new Interval(Minor, 7)
+      case 11 => new Interval(Major, 7)
+      case 12 => new Interval(Octave, 8)
+      case _ => ???
+    }
+
+    //TODO: Take an implicit Mode to affect result
+    def apply(p1:Pitch,p2:Pitch):Interval = Interval(p2.toPitchNumber-p1.toPitchNumber)
+   
   }
+
+  object KeySignatureSpelling extends Enumeration {
+    type KeySignatureSpelling = Value
+    val Mixed, Sharps, Flats = Value
+  }
+
+  trait Mode extends Music {
+    def getDegreePitch(d: ScaleDegree.Value): Pitch
+    def getSpelling: KeySignatureSpelling.Value
+  }
+
 }
