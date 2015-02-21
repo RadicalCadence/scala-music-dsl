@@ -61,6 +61,7 @@ package object structures {
 
       Pitch((midi.getOrElse(Math.abs((i+48)%12),"C")+octaves))
     }
+    def apply(pc: PitchClass.Value): Pitch = new Pitch(pc, Blank, 0)
   }
 
   case class Note(pitch: Pitch, duration: Beat) extends Music {
@@ -137,26 +138,32 @@ package object structures {
       case r(p,q,d) => new Interval(IntervalQuality(q), (p+d).toInt)
     }
 
-    def apply(i: Int): Interval = i match {
-      case 0 => new Interval(Unison, 1) 
-      case 1 => new Interval(Minor, 2)
-      case 2 => new Interval(Major, 2)
-      case 3 => new Interval(Minor, 3)
-      case 4 => new Interval(Major, 3)
-      case 5 => new Interval(Perfect, 4)
-      case 6 => new Interval(Diminished, 5)
-      case 7 => new Interval(Perfect, 5)
-      case 8 => new Interval(Minor, 6)
-      case 9 => new Interval(Major, 6)
-      case 10 => new Interval(Minor, 7)
-      case 11 => new Interval(Major, 7)
-      case 12 => new Interval(Octave, 8)
-      case _ => ???
-    }
+    def apply(i: Int): Interval = Interval(Pitch(0), Pitch(i))
 
-    //TODO: Take an implicit Mode to affect result
-    def apply(p1:Pitch,p2:Pitch):Interval = Interval(p2.toPitchNumber-p1.toPitchNumber)
-   
+    //Take an implicit Mode to affect result?
+    def apply(p1:Pitch,p2:Pitch):Interval = {
+      if(p1 != p2) {
+        val p = Stream.continually(PitchClass.values).flatten
+        val num = p.drop(p.indexOf(p1.pitchClass)).indexOf(p2.pitchClass)+1
+        val qual = (p2.toPitchNumber-p1.toPitchNumber) % 12 match {
+          case 0 => Octave
+          case 1 => Minor
+          case 2 => Major
+          case 3 => Minor
+          case 4 => Major
+          case 5 => Perfect
+          case 6 => Diminished
+          case 7 => Perfect
+          case 8 => Minor
+          case 9 => Major
+          case 10 => Minor
+          case 11 => Major
+        }
+        new Interval(qual, num)
+      } else {
+        new Interval(Unison, 1)
+      }
+    }
   }
 
   object KeySignatureSpelling extends Enumeration {
@@ -164,9 +171,12 @@ package object structures {
     val Mixed, Sharps, Flats = Value
   }
 
-  trait Mode extends Music {
-    def getDegreePitch(d: ScaleDegree.Value): Pitch
+  trait HasKeySignatureSpelling {
     def getSpelling: KeySignatureSpelling.Value
+  }
+
+  trait Mode extends Music with HasKeySignatureSpelling {
+    def getDegreePitch(d: ScaleDegree.Value): Pitch
   }
 
 }

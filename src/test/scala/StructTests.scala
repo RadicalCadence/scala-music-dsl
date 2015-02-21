@@ -64,6 +64,7 @@ class StructTests extends FunSuite {
     assert(Interval(Pitch("C"), Pitch("G")) == Interval(IntervalQuality.Perfect, 5))
     assert(Interval(Pitch("A"), Pitch("E'")) == Interval(IntervalQuality.Perfect, 5))
     assert(Interval(Pitch("C"), Pitch("C'")) == Interval(IntervalQuality.Octave, 8))
+    assert(Interval(Pitch("C"), Pitch("D'")) == Interval(IntervalQuality.Major, 9))
   }
 
 }
