@@ -4,7 +4,6 @@ import org.scalatest.FunSuite
 
 class StructTests extends FunSuite {
 
-  import structures._
   import parser._
 
   test("Pitch - String interpetation") {
@@ -35,8 +34,8 @@ class StructTests extends FunSuite {
   }
 
   test("Measure - Parsed simple measure") {
-    import structures.PitchDecorator._
-    import structures.PitchClass._
+    import PitchDecorator._
+    import PitchClass._
 
     assert(m"| C4 E4 G4 C'4 |" == Staff(Measure(TimeSignature(4,4), 
       Note(Pitch(C,Blank,0),Beat(1,4)), Note(Pitch(E,Blank,0),Beat(1,4)),
@@ -44,8 +43,8 @@ class StructTests extends FunSuite {
   }
 
   test("Measure - Parsed simple measure + decorators") {
-    import structures.PitchDecorator._
-    import structures.PitchClass._
+    import PitchDecorator._
+    import PitchClass._
 
     assert(m"| C#4 F4 G#4 C#'4 |" == Staff(Measure(TimeSignature(4,4),
       Note(Pitch(C,Sharp,0),Beat(1,4)), Note(Pitch(F,Blank,0),Beat(1,4)),

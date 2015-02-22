@@ -1,7 +1,7 @@
 package radical_cadence.dsl
 
 import scala.util.parsing.combinator.RegexParsers
-import radical_cadence.dsl.structures._
+import radical_cadence.dsl._
 
 /**
   * Parser combinator for the music notation DSL.
