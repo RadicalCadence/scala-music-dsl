@@ -15,6 +15,6 @@ libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % scalazVersion,
 scalacOptions := Seq("-feature", "-deprecation")
 
 initialCommands in console := """
-import radical_cadence.dsl.structures._
+import radical_cadence.dsl._
 import radical_cadence.dsl.parser._
 """

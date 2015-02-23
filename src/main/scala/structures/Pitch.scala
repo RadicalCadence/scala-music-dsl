@@ -7,8 +7,8 @@ case class Pitch(pitchClass: PitchClass.Value,
 
   override def toString: String = { 
     var octaves = "";
-    if (octave >= 0) { octaves = "+" * octave } 
-    else { octaves = "-" * Math.abs(octave) }
+    if (octave >= 0) { octaves = "'" * octave } 
+    else { octaves = "," * Math.abs(octave) }
 
     pitchClass.toString + PitchDecorator.toString(decorator) + octaves
   }

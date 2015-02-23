@@ -57,4 +57,28 @@ package object parser {
       case _ => ""
     }
   }
+
+  object ShowAsLY {
+
+    def apply(m: Music) = {
+      import java.io._
+      import sys.process._
+
+      val ly = "\\version \"2.18.1\"\n\n<<\n{ "+codify(m)+"\n}\n>>"
+      val fileName = s"rc-${System.currentTimeMillis()}"
+      val bw = new BufferedWriter(new FileWriter(fileName+".ly"))
+      bw.write(ly)
+      bw.close()
+      s"lilypond --pdf ${fileName}.ly".!
+      s"open ${fileName}.pdf".!
+    }
+
+    def codify(m: Music): String = m match { 
+      case Note(p,d) => (p.toString+d.denom).toLowerCase
+      case Measure(ts,ms) => s"""| ${codify(ms)} |"""
+      case Staff(ms) => s"""${codify(ms)}"""
+      case _ => ""
+    }
+      
+  }
 }
