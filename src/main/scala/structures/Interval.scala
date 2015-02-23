@@ -6,6 +6,10 @@ case class Interval(quality: IntervalQuality.Value, number: Int) extends Music {
   override def toString:String = {
     (if(number>0) "+" else "-")+IntervalQuality.toString(quality)+Math.abs(number).toString
   }
+
+  //TODO: Implement!
+  def asLy: String = ""
+  def asRc: String = ""
 }
 
 object IntervalQuality extends Enumeration {

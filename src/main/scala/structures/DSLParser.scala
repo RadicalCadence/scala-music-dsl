@@ -47,37 +47,40 @@ package object parser {
   }
 
   object DSLGenerator {
-    
-    def apply(m: Music): String = codify(m)
-
-    def codify(m: Music): String = m match {
-      case Note(p,d) => p.toString+d.denom
-      case Measure(ts,ms) => s"""| ${codify(ms)} |"""
-      case Staff(ms) => s"""${codify(ms)}"""
-      case _ => ""
-    }
+    def apply(m: Music): String = m.asRc
   }
 
-  object ShowAsLY {
+  object ShowAsLy {
 
     def apply(m: Music) = {
       import java.io._
       import sys.process._
 
-      val ly = "\\version \"2.18.1\"\n\n<<\n{ "+codify(m)+"\n}\n>>"
       val fileName = s"rc-${System.currentTimeMillis()}"
       val bw = new BufferedWriter(new FileWriter(fileName+".ly"))
-      bw.write(ly)
+      bw.write(generateLy(m))
       bw.close()
-      s"lilypond --pdf ${fileName}.ly".!
+
+      val resultLy = s"lilypond --pdf ${fileName}.ly".!!
       s"open ${fileName}.pdf".!
     }
 
-    def codify(m: Music): String = m match { 
-      case Note(p,d) => (p.toString+d.denom).toLowerCase
-      case Measure(ts,ms) => s"""| ${codify(ms)} |"""
-      case Staff(ms) => s"""${codify(ms)}"""
-      case _ => ""
+    def generateLy(m: Music): String = {
+      import java.util.Calendar
+      s"""% ${Calendar.getInstance().getTime()}
+      |\\version "2.18.1"
+      |
+      |\\header { }
+      |
+      |\\layout { }
+      |
+      |\\paper { }
+      |
+      |\\score {
+      |  \\new Staff {
+      |    ${m.asLy}
+      |  }
+      |}""".stripMargin
     }
       
   }

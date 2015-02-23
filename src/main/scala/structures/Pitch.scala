@@ -13,6 +13,9 @@ case class Pitch(pitchClass: PitchClass.Value,
     pitchClass.toString + PitchDecorator.toString(decorator) + octaves
   }
 
+  def asLy: String = this.toString.toLowerCase
+  def asRc: String = this.toString.toLowerCase
+
   def compare(that: Pitch): Int = this.toPitchNumber.compare(that.toPitchNumber)
 }
 

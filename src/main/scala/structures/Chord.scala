@@ -1,6 +1,10 @@
 package radical_cadence.dsl
 
-case class Chord(root: Pitch, quality: ChordQuality.Value)
+case class Chord(root: Pitch, quality: ChordQuality.Value) {
+  //TODO: Implement!
+  def asLy: String = ""
+  def asRc: String = ""
+}
 
 object Chord {
   private val root = """([a-g,A-G])([n|#|x|X|\-|_]?)([,|']*)"""
