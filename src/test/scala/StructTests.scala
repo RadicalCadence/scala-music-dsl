@@ -27,6 +27,7 @@ class StructTests extends FunSuite {
   }
   
   test("Pitch - fromPitchNumber") {
+    assert(Pitch(0) == Pitch("C"))
     assert(Pitch(9) == Pitch("A"))
     assert(Pitch(15) == Pitch("E-'"))
     assert(Pitch(-3) == Pitch("A,"))
@@ -58,6 +59,7 @@ class StructTests extends FunSuite {
   }
 
   test("Interval - From Pitches") {
+    assert(Interval(Pitch("C"), Pitch("E")) == Interval(IntervalQuality.Major, 3))
     assert(Interval(Pitch("D"), Pitch("F#")) == Interval(IntervalQuality.Major, 3))
     assert(Interval(Pitch("C"), Pitch("E-")) == Interval(IntervalQuality.Minor, 3))
     assert(Interval(Pitch("C"), Pitch("G")) == Interval(IntervalQuality.Perfect, 5))

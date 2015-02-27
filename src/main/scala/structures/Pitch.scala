@@ -2,8 +2,10 @@ package radical_cadence.dsl
 
 case class Pitch(pitchClass: PitchClass.Value, 
   decorator: PitchDecorator.Value, octave: Int) extends Music with Ordered[Pitch] {
-  def toPitchNumber: Int = { PitchClass.toPitchNumber(pitchClass)+
-   PitchDecorator.toPitchNumber(decorator) + (octave*12) }
+
+  def toPitchNumber: Int = { 
+    PitchClass.toPitchNumber(pitchClass)+PitchDecorator.toPitchNumber(decorator)+(octave*12)
+  }
 
   override def toString: String = { 
     var octaves = "";
@@ -63,7 +65,7 @@ object Pitch {
   }
   def apply(i: Int): Pitch = { 
     var octaves = "";
-    if(i > 0) {
+    if(i >= 0) {
       octaves = "'" * (i / 12)
     } else {
       octaves = "," * (Math.abs(i-12) / 12)
