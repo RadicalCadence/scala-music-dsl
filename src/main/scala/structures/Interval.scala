@@ -43,19 +43,9 @@ object Interval {
 
   def apply(p1:Pitch,p2:Pitch):Interval = {
     if(p1 != p2) {
-      //val p = Stream.continually(PitchClass.values).flatten
-      //val num = p.segmentLength(_ != p2.pitchClass, p.indexOf(p1.pitchClass))+1
-
       val pitches = (p1.toPitchNumber to p2.toPitchNumber).collect { case i => Pitch(i) }
       val distance = pitches.drop(1).foldLeft(List(p1.pitchClass)) { 
-        (a,c) => { 
-          println(c) 
-          if(a.tail != c.pitchClass) {
-            a :+ c.pitchClass 
-          } 
-          else a 
-        }
-      }
+        (a,c) => { if(a.last != c.pitchClass) { a :+ c.pitchClass } else a } }
       val qual = q.getOrElse((p2.toPitchNumber-p1.toPitchNumber) % 12, Unison)
       new Interval(qual, distance.size)
     } else {
