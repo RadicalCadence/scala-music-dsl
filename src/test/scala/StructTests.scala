@@ -58,7 +58,7 @@ class StructTests extends FunSuite {
     assert(Interval("+m6") == Interval(IntervalQuality.Minor, 6))
   }
 
-  test("Interval - From Pitches") {
+  test("Interval - Generate Interval from Pitches") {
     assert(Interval(Pitch("C"), Pitch("E")) == Interval(IntervalQuality.Major, 3))
     assert(Interval(Pitch("D"), Pitch("F#")) == Interval(IntervalQuality.Major, 3))
     assert(Interval(Pitch("C"), Pitch("E-")) == Interval(IntervalQuality.Minor, 3))
@@ -68,4 +68,20 @@ class StructTests extends FunSuite {
     assert(Interval(Pitch("C"), Pitch("D'")) == Interval(IntervalQuality.Major, 9))
   }
 
+  test("Interval - Get Target Pitch") {
+    assert(Interval(IntervalQuality.Major, 3).getPitch(Pitch("C")) == Pitch("E"))
+    assert(Interval(IntervalQuality.Perfect, 5).getPitch(Pitch("C")) == Pitch("G"))
+    assert(Interval(IntervalQuality.Octave, 8).getPitch(Pitch("C")) == Pitch("C'"))
+  }
+
+  test("Major Scale - Scale Degrees (C Major)") {
+    val scale = MajorScale(Pitch("C"))
+    assert(scale.getDegreePitch(ScaleDegree.I) == Pitch("C"))
+    assert(scale.getDegreePitch(ScaleDegree.II) == Pitch("D"))
+    assert(scale.getDegreePitch(ScaleDegree.III) == Pitch("E"))
+    assert(scale.getDegreePitch(ScaleDegree.IV) == Pitch("F"))
+    assert(scale.getDegreePitch(ScaleDegree.V) == Pitch("G"))
+    assert(scale.getDegreePitch(ScaleDegree.VI) == Pitch("A"))
+    assert(scale.getDegreePitch(ScaleDegree.VII) == Pitch("B"))
+  }
 }

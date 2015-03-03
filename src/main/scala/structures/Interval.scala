@@ -1,15 +1,23 @@
 package radical_cadence.dsl
 
 case class Interval(quality: IntervalQuality.Value, number: Int) extends Music {
+  
   //TODO: We also need to test for valid quality+number combos
   require(number != 0)
   override def toString:String = {
     (if(number>0) "+" else "-")+IntervalQuality.toString(quality)+Math.abs(number).toString
   }
-
+  
   //TODO: Implement!
   def asLy: String = ""
   def asRc: String = ""
+
+  def getPitch(from: Pitch): Pitch = {
+    def pitchClass = PitchClass.valueStream.dropWhile(_ != from.pitchClass)(number-1)
+    //TODO: Calculate the PitchDecorator based on the Mode
+    Pitch(pitchClass, PitchDecorator.Blank, number/8)
+  }
+
 }
 
 object IntervalQuality extends Enumeration {

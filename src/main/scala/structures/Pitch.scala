@@ -1,7 +1,7 @@
 package radical_cadence.dsl
 
-case class Pitch(pitchClass: PitchClass.Value, 
-  decorator: PitchDecorator.Value, octave: Int) extends Music with Ordered[Pitch] {
+case class Pitch(pitchClass: PitchClass.Value, decorator: PitchDecorator.Value,
+  octave: Int) extends Music with Ordered[Pitch] {
 
   def toPitchNumber: Int = { 
     PitchClass.toPitchNumber(pitchClass)+PitchDecorator.toPitchNumber(decorator)+(octave*12)
@@ -30,6 +30,8 @@ object PitchClass extends Enumeration {
   
   def apply(s: String):PitchClass = withName(s.toUpperCase)
   def toPitchNumber(p: PitchClass): Int = midi.getOrElse(p, 0)
+
+  def valueStream = Stream.continually(PitchClass.values).flatten
 }
 
 object PitchDecorator extends Enumeration {
@@ -63,7 +65,9 @@ object Pitch {
       o.count(c => (c == ''')) - o.count(c => (c == ',')))
     case _ => ???
   }
+
   def apply(i: Int): Pitch = { 
+
     var octaves = "";
     if(i >= 0) {
       octaves = "'" * (i / 12)
@@ -73,5 +77,7 @@ object Pitch {
 
     Pitch((midi.getOrElse(Math.abs((i+48)%12),"C")+octaves))
   }
+
   def apply(pc: PitchClass.Value): Pitch = new Pitch(pc, Blank, 0)
+
 }
