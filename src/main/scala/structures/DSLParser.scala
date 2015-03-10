@@ -43,7 +43,7 @@ package object parser {
       case p => Staff(p:_*)
     }
 
-    def music: Parser[Music] = pitch | note | measure | staff
+    def music: Parser[Music] = staff | measure | note | pitch
 
     def apply(input: String): Music = parseAll(music, input) match {
         case Success(result, _) => result
