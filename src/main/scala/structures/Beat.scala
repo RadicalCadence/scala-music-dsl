@@ -16,3 +16,11 @@ case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music {
   def asLy: String = ""
   def asRc: String = ""
 }
+
+object TimeSignature {
+  private val r = """\[(\d),(\d)\]""".r
+
+  def apply(str: String): TimeSignature = str match {
+    case r(n,d) => new TimeSignature(n.toInt,d.toInt)
+  }
+}

@@ -16,26 +16,36 @@ package object parser {
     def pitchDecorator: Parser[PitchDecorator.Value] = """([n|#|x|X|\-|_]?)""".r ^^ {
       PitchDecorator(_) 
     }
-    def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { case s =>
-      s.count(c => (c == ''')) - s.count(c => (c == ','))
+    def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { 
+      case s => s.count(c => (c == ''')) - s.count(c => (c == ','))
     }
 
     def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
       case c ~ d ~ o => Pitch(c, d.getOrElse(PitchDecorator.Blank), o.getOrElse(0))
     }
     
-    //TODO: Add math for dotted notes
     def note: Parser[Note] = pitchClass ~ opt(pitchDecorator) ~ 
     opt(pitchOctave) ~ """([\d])""".r ^^ {
       case c ~ d ~ o ~ b => Note(Pitch(c, d.getOrElse(PitchDecorator.Blank), 
         o.getOrElse(0)), Beat(1, b.toInt))
     }
 
-    def measure:Parser[Staff]= opt("|") ~> repsep(rep1(note|pitch),"|") <~ opt("|") ^^ {
-      case p => Staff(p.map({ Measure(TimeSignature(), _:_*) }):_*)
+    def timeSig: Parser[TimeSignature] = """(\[\d,\d\])""".r ^^ {
+      case n => TimeSignature(n)
     }
 
-    def apply(input: String): Music = parseAll(measure, input) match {
+    def measure: Parser[Measure] = opt("|") ~> opt(timeSig) ~ rep1(note | pitch) <~ "|" ^^ {
+      case None ~ p => Measure(TimeSignature(), p:_*)
+      case Some(t) ~ p => Measure(t, p:_*)
+    }
+
+    def staff: Parser[Staff] = rep1(measure) ^^ {
+      case p => Staff(p:_*)
+    }
+
+    def music: Parser[Music] = pitch | note | measure | staff
+
+    def apply(input: String): Music = parseAll(music, input) match {
         case Success(result, _) => result
         case failure : NoSuccess => scala.sys.error(failure.msg)
     }
@@ -43,7 +53,7 @@ package object parser {
   }
 
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
-    def m(args: Any*): Music = { DSLParser(sc.parts(0)) }
+    def m(args: Any*) = DSLParser(sc.parts(0))
   }
 
   object DSLGenerator {
