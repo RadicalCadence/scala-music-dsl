@@ -17,7 +17,7 @@ package object parser {
       PitchDecorator(_) 
     }
     def pitchOctave: Parser[Int] = """([,|']*)""".r ^^ { 
-      case s => s.count(c => (c == ''')) - s.count(c => (c == ','))
+      case s => s.count(_ == ''') - s.count(_ == ',')
     }
 
     def pitch: Parser[Pitch] = pitchClass ~ opt(pitchDecorator) ~ opt(pitchOctave) ^^ {
@@ -40,7 +40,10 @@ package object parser {
     }
 
     def staff: Parser[Staff] = rep1(measure) ^^ {
-      case p => Staff(p:_*)
+      case p => {
+        //Fill timesignatures in later measures
+        Staff(p:_*)
+      }
     }
 
     def music: Parser[Music] = staff | measure | note | pitch
@@ -54,6 +57,7 @@ package object parser {
 
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
     def m(args: Any*) = DSLParser(sc.parts(0))
+    def ly(args: Any*) = ShowAsLy(DSLParser(sc.parts(0)))
   }
 
   object DSLGenerator {
@@ -78,6 +82,7 @@ package object parser {
     def generateLy(m: Music): String = {
       import java.util.Calendar
       s"""% ${Calendar.getInstance().getTime()}
+      |
       |\\version "2.18.1"
       |
       |\\header { }

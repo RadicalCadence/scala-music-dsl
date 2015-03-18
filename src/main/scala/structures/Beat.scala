@@ -13,8 +13,8 @@ case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music {
   override def toString: String = s"TimeSig[$num,$denom]"
 
   //TODO: Implement!
-  def asLy: String = ""
-  def asRc: String = ""
+  def asLy: String = s"""\\time $num/$denom"""
+  def asRc: String = s"[$num,$denom]"
 }
 
 object TimeSignature {
