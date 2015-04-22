@@ -41,7 +41,6 @@ package object parser {
 
     def staff: Parser[Staff] = rep1(measure) ^^ {
       case p => {
-        //Fill timesignatures in later measures
         Staff(p:_*)
       }
     }
@@ -57,7 +56,8 @@ package object parser {
 
   implicit class DSLHelper(val sc: StringContext) extends AnyVal {
     def m(args: Any*) = DSLParser(sc.parts(0))
-    def ly(args: Any*) = ShowAsLy(DSLParser(sc.parts(0)))
+    def show(args: Any*) = ShowAsLy(DSLParser(sc.parts(0)))
+    def ly(args: Any*) = ShowAsLy.generateLy(DSLParser(sc.parts(0)))
   }
 
   object DSLGenerator {
