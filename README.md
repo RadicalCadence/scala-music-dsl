@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/RadicalCadence/scala-music-dsl.svg)](https://travis-ci.org/RadicalCadence/scala-music-dsl)
+
 Describing Music in Scala with Domain Specific Languages
 ========================================================
 
