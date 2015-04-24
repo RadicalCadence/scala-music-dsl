@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/briangathright/scala-music-dsl.svg)](https://travis-ci.org/briangathright/scala-music-dsl)
+
 Describing Music in Scala with Domain Specific Languages
 ========================================================
 
