@@ -6,19 +6,19 @@ class PitchTests extends FunSuite {
 
   import parser._
 
-  test("Pitch - String interpetation") {
+  test("Pitch - String interpretation") {
     assert(Pitch(PitchClass.D,PitchDecorator.Blank,0)== Pitch("d"))
   }
   
-  test("Pitch - String intepretation w/ flat decorator") {
+  test("Pitch - String interpretation w/ flat decorator") {
     assert(Pitch(PitchClass.E,PitchDecorator.Flat,0) == Pitch("e-"))
   }
 
-  test("Pitch - String intepretation w/ # decorator + positive octave") {
+  test("Pitch - String interpretation w/ # decorator + positive octave") {
     assert(Pitch(PitchClass.D,PitchDecorator.Sharp,2) == Pitch("d#''"))
   }
 
-  test("Pitch - String intepretation w/ X decorator + negative octave") {
+  test("Pitch - String interpretation w/ X decorator + negative octave") {
     assert(Pitch(PitchClass.D,PitchDecorator.DoubleSharp,-2) == Pitch("dX,,"))
   }
 
