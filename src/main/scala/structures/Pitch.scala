@@ -16,7 +16,7 @@ case class Pitch(pitchClass: PitchClass.Value, decorator: PitchDecorator.Value,
   }
 
   def asLy: String = this.toString.toLowerCase
-  def asRc: String = this.toString.toLowerCase
+  def asDSL: String = this.toString.toLowerCase
 
   def compare(that: Pitch): Int = this.toPitchNumber.compare(that.toPitchNumber)
 }

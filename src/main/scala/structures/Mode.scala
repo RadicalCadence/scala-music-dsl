@@ -45,6 +45,6 @@ case class MajorScale(root: Pitch) extends Mode {
   }
 
   def asLy: String = ""
-  def asRc: String = ""
+  def asDSL: String = ""
 
 }

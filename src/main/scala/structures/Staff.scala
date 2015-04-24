@@ -5,5 +5,5 @@ case class Staff(music: Music*) extends Music {
   override def toString: String = s"Staff($music)"
 
   def asLy: String = s"""{ ${music.foldLeft("")((s, m) => s+m.asLy+" ")}}"""
-  def asRc: String = s"""{ ${music.foldLeft("")((s, m) => s+m.asRc+" ")}}"""
+  def asDSL: String = s"""{ ${music.foldLeft("")((s, m) => s+m.asDSL+" ")}}"""
 }
