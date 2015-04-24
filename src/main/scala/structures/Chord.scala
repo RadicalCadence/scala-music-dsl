@@ -3,7 +3,7 @@ package radical_cadence.dsl
 case class Chord(root: Pitch, quality: ChordQuality.Value) {
   //TODO: Implement!
   def asLy: String = ""
-  def asRc: String = ""
+  def asDSL: String = ""
 }
 
 object Chord {

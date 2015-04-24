@@ -5,5 +5,5 @@ case class Measure(timeSignature: TimeSignature, music: Music*) extends Music {
   override def toString: String = s"Measure($timeSignature, $music)"
 
   def asLy: String = s"""${timeSignature.asLy} ${music.foldLeft("")((s, m) => s+m.asLy+" ")}|"""
-  def asRc: String = s"""${timeSignature.asRc} ${music.foldLeft("")((s, m) => s+m.asRc+" ")}|"""
+  def asDSL: String = s"""${timeSignature.asDSL} ${music.foldLeft("")((s, m) => s+m.asDSL+" ")}|"""
 }

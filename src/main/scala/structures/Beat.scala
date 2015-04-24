@@ -6,7 +6,7 @@ case class Beat(num: Int = 1, denom: Int = 4) extends Music {
 
   //TODO: This is temporary, must handle triplets!
   def asLy: String = denom.toString
-  def asRc: String = denom.toString
+  def asDSL: String = denom.toString
 }
 
 case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music {
@@ -14,7 +14,7 @@ case class TimeSignature(num: Int = 4, denom: Int = 4) extends Music {
 
   //TODO: Implement!
   def asLy: String = s"""\\time $num/$denom"""
-  def asRc: String = s"[$num,$denom]"
+  def asDSL: String = s"[$num,$denom]"
 }
 
 object TimeSignature {

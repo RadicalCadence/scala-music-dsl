@@ -61,7 +61,7 @@ package object parser {
   }
 
   object DSLGenerator {
-    def apply(m: Music): String = m.asRc
+    def apply(m: Music): String = m.asDSL
   }
 
   object ShowAsLy {

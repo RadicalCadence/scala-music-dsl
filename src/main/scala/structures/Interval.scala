@@ -10,7 +10,7 @@ case class Interval(quality: IntervalQuality.Value, number: Int) extends Music {
   
   //TODO: Implement!
   def asLy: String = ""
-  def asRc: String = ""
+  def asDSL: String = ""
 
   def getPitch(from: Pitch): Pitch = {
     def pitchClass = PitchClass.valueStream.dropWhile(_ != from.pitchClass)(number-1)
