@@ -56,16 +56,14 @@ For example, `m"| C4 C4 C4 C4|"` would make a DSL music object.
 This section will introduce syntax for most of the 
 currently implemented features.
 
-Note
-----
+###Note
 
 You can create a note by entering the letter followed by the duration. 
 
 * C quarter note: `C4`
 * D half note:    `D2`
 
-Pitch
------
+###Pitch
 
 Notes can also have pitches. Here's some examples with C.
 
@@ -78,8 +76,7 @@ Notes can also have pitches. Here's some examples with C.
 
 The pitch goes after the note and before the duration. For example, a C sharp quarter note: `C#4`.
 
-Octaves
--------
+###Octaves
 
 You can go up an octave by typing `'`, or go up more octaves by typing `''` etc. 
 
@@ -87,21 +84,18 @@ You can down an octave by typing `,` or go down more octaves by typing `,,` etc.
 
 The octave goes after the note (and pitch if there is one) and before the beat: `C#''4`.
 
-Measure
--------
+###Measure
 
 Measures consist of Notes (with pitches, beats, octaves etc) between two `|`.
 
 For example, `| C#4 D#4 E4 F4 |`.
 
-Time Signature
-------------
+###Time Signature
 
 Optionally, within a measure you can denote the time signature with 
 `[a/b]`: `| [3/4] C4 D4 E4 |`.
 
-Staff
------
+###Staff
 
 A staff consists of one or more measures. 
 For example, `| C4 E4 G4 C'4 | D4 F4 A4 C'4 |`
