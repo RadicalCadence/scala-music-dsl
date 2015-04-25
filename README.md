@@ -61,8 +61,8 @@ Note
 
 You can create a note by entering the letter followed by the duration. 
 
-* A C quarternote: `C4`
-* A D halfnote:    `D2`
+* C quarternote: `C4`
+* D halfnote:    `D2`
 
 Pitch
 -----
