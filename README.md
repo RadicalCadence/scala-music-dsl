@@ -61,8 +61,8 @@ Note
 
 You can create a note by entering the letter followed by the duration. 
 
-* C quarternote: `C4`
-* D halfnote:    `D2`
+* C quarter note: `C4`
+* D half note:    `D2`
 
 Pitch
 -----
@@ -73,10 +73,10 @@ Notes can also have pitches. Here's some examples with C.
 * Natural: `Cn`
 * Sharp: `C#`
 * Flat: `C-`
-* DoubleSharp: `Cx` or `C##`
-* DoubleFlat: `C_`
+* Double Sharp: `Cx` or `C##`
+* Double Flat: `C_`
 
-The pitch goes after the note and before the duration. For example, a C sharp quarternote: `C#4`.
+The pitch goes after the note and before the duration. For example, a C sharp quarter note: `C#4`.
 
 Octaves
 -------
