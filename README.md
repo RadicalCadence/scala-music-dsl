@@ -83,7 +83,7 @@ Octaves
 
 You can go up an octave by typing `'`, or go up more octaves by typing `''` etc. 
 
-You can down an octave by typing ',' or go down more octaves by typing `,,` etc.
+You can down an octave by typing `,` or go down more octaves by typing `,,` etc.
 
 The octave goes after the note (and pitch if there is one) and before the beat: `C#''4`.
 
