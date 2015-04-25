@@ -94,17 +94,17 @@ Measures consist of Notes (with pitches, beats, octaves etc) between two `|`.
 
 For example, `| C#4 D#4 E4 F4 |`.
 
-Time Measure
+Time Signature
 ------------
 
-Optionally, within a measure you can denote the time measure with 
+Optionally, within a measure you can denote the time signature with 
 `[a/b]`: `| [3/4] C4 D4 E4 |`.
 
 Staff
 -----
 
 A staff consists of one or more measures. 
-For example, `| C4 C4 C4 C4 | D4 D4 D4 D4 |`
+For example, `| C4 E4 G4 C'4 | D4 F4 A4 C'4 |`
 
 Contributing
 ------------
